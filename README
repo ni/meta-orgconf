@@ -1,0 +1,12 @@
+Organizational Configuration Repo
+
+The primary goal of this layer is to add optimizations/configuration
+options/recipes that are specific to your organization into this layer
+to plug into the NI Linux RT image build system in a clean, segregated
+manner.
+
+There are many excellent resources online on how to create contents for
+a layer, including documentation from Yocto and OpenEmbedded.
+
+https://www.yoctoproject.org/documentation
+http://www.openembedded.org/wiki/Documentation
