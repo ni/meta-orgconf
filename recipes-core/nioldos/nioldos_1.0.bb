@@ -12,13 +12,21 @@ SRC_URI_x64 = "file://autologin.sh \
                file://xserver-xfce.default \
 "
 
+SRC_URI += " file://safemode_default_config.tar.gz;unpack=false "
+
 inherit build-services
 
-DEPENDS = "bash linux-nilrt grub-efi genext2fs-native gzip-native"
+DEPENDS = "bash linux-nilrt gzip-native"
+DEPENDS_append_x64 = " grub-efi genext2fs-native "
+DEPENDS_append_xilinx-zynqhf = " zynq-bootscripts zynq-itb "
+DEPENDS_append_xilinx-zynq   = " zynq-bootscripts zynq-itb "
+
 RDEPENDS_${PN} = "bash"
 
+do_install[depends] = " linux-nilrt:do_deploy "
+
 # the export version (for ex. 4.0.0d4) is automatically detected, use ... instead of it
-EXPORTS_TO_FETCH = "\
+EXPORTS_TO_FETCH_x64 = "\
     nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub \
     nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub_legacy \
     nilinux/bootloader/niefimgr/export/1.0/.../targets/linuxU/x64/gcc-4.3/release/efimgr \
@@ -29,7 +37,7 @@ EXPORTS_TO_FETCH = "\
 RAMDISK_SIZE_KB="524288K"
 RAMDISK_NUM_INODES="32768"
 
-do_compile() {
+do_compile_x64() {
     # here create the ramdisk image needed for migration
     RAMDISK_PATH=${WORKDIR}/ramdisk-image
     mkdir -p ${RAMDISK_PATH}
@@ -57,7 +65,7 @@ do_compile() {
     rm -rf ${WORKDIR}/ramdisk
 }
 
-do_install() {
+do_install_x64() {
     mkdir -p ${D}/boot/.oldNILinuxRT/safemode_files/fonts
     mkdir -p ${D}/boot/.oldNILinuxRT/.provision
     mkdir -p ${D}/boot/.oldNILinuxRT/provision
@@ -88,8 +96,21 @@ do_install() {
     install -m 0755 ${DEPLOY_DIR_IMAGE}/bootx64.efi	${D}/boot/.oldNILinuxRT/provision
 }
 
+do_install_xilinx-zynqhf() {
+    install -d ${D}/boot
+    install -d ${D}/boot/.oldNILinuxRT/dtbs
+    for f in ${DEPLOY_DIR_IMAGE}/uImage-ni-*.dtb; do
+        dtb_name=`echo $f | awk -F"[-.]" '{print $(NF-1)}'`
+        install -m 0644 $f ${D}/boot/.oldNILinuxRT/dtbs/ni-0x$dtb_name.dtb
+    done
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/restore-mode-image-xilinx-zynqhf.cpio.gz.u-boot ${D}/boot/.oldNILinuxRT/ramdisk
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/uImage ${D}/boot/.oldNILinuxRT/
+    install -m 0644 ${STAGING_DIR_TARGET}/boot/bw-migrate.scr ${D}/boot/.oldNILinuxRT/
+    install -m 0644 ${WORKDIR}/safemode_default_config.tar.gz ${D}/boot/.oldNILinuxRT/
+}
+
 FILES_${PN} = "/boot/.oldNILinuxRT"
 
 # the binaries triggering these QA checks are compiled from BS
-INSANE_SKIP_${PN} += "already-stripped split-strip ldflags arch debug-files"
+INSANE_SKIP_${PN} += "already-stripped split-strip ldflags arch debug-files host-user-contaminated"
 INSANE_SKIP_${PN}-dbg += "arch"
