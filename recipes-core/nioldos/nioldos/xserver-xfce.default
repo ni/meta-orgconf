@@ -1,0 +1,5 @@
+echo "$0: Disabled in recovery mode." >&2
+exit 0
+
+XUSER=lvuser
+HOME=/home/lvuser

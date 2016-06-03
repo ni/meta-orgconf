@@ -1,0 +1,98 @@
+SUMMARY = "Install the previous NI OS for migration"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
+
+SRC_URI_x64 = "file://autologin.sh \
+               file://bootimage.cfg \
+               file://grub.cfg \
+               file://grub_migrate.cfg \
+               file://grubenv_non_ni_target \
+               file://ni_provision_safemode \
+               file://installation_files_list.ini \
+               file://xserver-xfce.default \
+"
+
+inherit build-services
+
+DEPENDS = "bash linux-nilrt grub-efi genext2fs-native gzip-native"
+RDEPENDS_${PN} = "bash"
+
+# the export version (for ex. 4.0.0d4) is automatically detected, use ... instead of it
+EXPORTS_TO_FETCH = "\
+    nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub \
+    nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub_legacy \
+    nilinux/bootloader/niefimgr/export/1.0/.../targets/linuxU/x64/gcc-4.3/release/efimgr \
+    nilinux/os-common/export/4.0/.../standard_x64_safemode.tar.gz \
+    ThirdPartyExports/NIOpenEmbedded/export/4.0/.../.archives/linux.zip \
+"
+
+RAMDISK_SIZE_KB="524288K"
+RAMDISK_NUM_INODES="32768"
+
+do_compile() {
+    # here create the ramdisk image needed for migration
+    RAMDISK_PATH=${WORKDIR}/ramdisk-image
+    RAMDISK_TMP=${WORKDIR}/ramdisk-tmp
+    mkdir -p ${RAMDISK_PATH}
+    mkdir -p ${RAMDISK_TMP}
+
+    unzip -d ${RAMDISK_TMP} ${S}/linux.zip
+    tar -xf ${RAMDISK_TMP}/targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 -C ${RAMDISK_PATH}
+
+    sed -i "s#\([0-6]\+:[0-6]\+:respawn:/s\?bin/getty\)[ \t]\+\([0-9]\+[ \t]\+tty[A-Za-z0-9]\+\)#\1 -l /etc/init.d/autologin\.sh -n \2#" ${RAMDISK_PATH}/etc/inittab
+    sed -i -e s/root:NP:/root::/ ${RAMDISK_PATH}/etc/shadow
+
+    cp -f ${WORKDIR}/ni_provision_safemode	${RAMDISK_PATH}/home/admin/
+    cp -f ${WORKDIR}/autologin.sh		${RAMDISK_PATH}/etc/init.d
+    cp -f ${WORKDIR}/xserver-xfce.default	${RAMDISK_PATH}/etc/default/xserver-xfce
+
+    find ${S}/smasher_grub/grub-* -maxdepth 0 -type f -exec cp  -f '{}' ${RAMDISK_PATH}/usr/sbin/ \;
+
+    # do not enable network devices by default
+    rm -f ${WORKDIR}/etc/rc?.d/*networking
+
+    genext2fs -b ${RAMDISK_SIZE_KB} -N ${RAMDISK_NUM_INODES} -d ${RAMDISK_PATH} ${WORKDIR}/ramdisk
+    gzip -f9 ${WORKDIR}/ramdisk
+
+    # cleanup ramdisk creation generated files
+    rm -rf ${RAMDISK_PATH}
+    rm -rf ${RAMDISK_TMP}
+    rm -rf ${WORKDIR}/ramdisk
+}
+
+do_install() {
+    mkdir -p ${D}/boot/.oldNILinuxRT/safemode_files/fonts
+    mkdir -p ${D}/boot/.oldNILinuxRT/.provision
+    mkdir -p ${D}/boot/.oldNILinuxRT/provision
+    mkdir -p ${D}/boot/.oldNILinuxRT/grub2
+    mkdir -p ${D}/boot/.oldNILinuxRT/grub2-legacy
+
+    tar -xf ${S}/standard_x64_safemode.tar.gz \
+        -C ${D}/boot/.oldNILinuxRT/safemode_files
+
+    cp ${D}/boot/.oldNILinuxRT/safemode_files/bootimage.ini \
+       ${D}/boot/.oldNILinuxRT/.provision
+
+    cp ${WORKDIR}/grub.cfg		${D}/boot/.oldNILinuxRT/.provision
+    cp ${WORKDIR}/bootimage.cfg		${D}/boot/.oldNILinuxRT/.provision
+    cp ${WORKDIR}/grub_migrate.cfg	${D}/boot/.oldNILinuxRT/grub.cfg
+    cp ${WORKDIR}/grubenv_non_ni_target ${D}/boot/.oldNILinuxRT/safemode_files
+    cp ${WORKDIR}/ni_provision_safemode	${D}/boot/.oldNILinuxRT/provision
+    cp ${WORKDIR}/installation_files_list.ini	${D}/boot/.oldNILinuxRT/provision
+
+    cp ${WORKDIR}/ramdisk.gz		${D}/boot/.oldNILinuxRT/.provision
+    cp ${S}/efimgr			${D}/boot/.oldNILinuxRT/provision
+
+    cp -a ${S}/smasher_grub/*		${D}/boot/.oldNILinuxRT/grub2
+    cp -a ${S}/smasher_grub_legacy/*	${D}/boot/.oldNILinuxRT/grub2-legacy
+    cp ${S}/smasher_grub/unicode.pf2	${D}/boot/.oldNILinuxRT/safemode_files/fonts
+
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage		${D}/boot/.oldNILinuxRT/.provision
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/bootx64.efi	${D}/boot/.oldNILinuxRT/provision
+}
+
+FILES_${PN} = "/boot/.oldNILinuxRT"
+
+# the binaries triggering these QA checks are compiled from BS
+INSANE_SKIP_${PN} += "already-stripped split-strip ldflags arch debug-files"
+INSANE_SKIP_${PN}-dbg += "arch"
