@@ -23,7 +23,7 @@ EXPORTS_TO_FETCH = "\
     nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub_legacy \
     nilinux/bootloader/niefimgr/export/1.0/.../targets/linuxU/x64/gcc-4.3/release/efimgr \
     nilinux/os-common/export/4.0/.../standard_x64_safemode.tar.gz \
-    ThirdPartyExports/NIOpenEmbedded/export/4.0/.../.archives/linux.zip \
+    ThirdPartyExports/NIOpenEmbedded/export/4.0/.../targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 \
 "
 
 RAMDISK_SIZE_KB="524288K"
@@ -32,12 +32,9 @@ RAMDISK_NUM_INODES="32768"
 do_compile() {
     # here create the ramdisk image needed for migration
     RAMDISK_PATH=${WORKDIR}/ramdisk-image
-    RAMDISK_TMP=${WORKDIR}/ramdisk-tmp
     mkdir -p ${RAMDISK_PATH}
-    mkdir -p ${RAMDISK_TMP}
 
-    unzip -d ${RAMDISK_TMP} ${S}/linux.zip
-    tar -xf ${RAMDISK_TMP}/targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 -C ${RAMDISK_PATH}
+    tar -xf ${S}/x64.tar.bz2 -C ${RAMDISK_PATH}
 
     sed -i "s#\([0-6]\+:[0-6]\+:respawn:/s\?bin/getty\)[ \t]\+\([0-9]\+[ \t]\+tty[A-Za-z0-9]\+\)#\1 -l /etc/init.d/autologin\.sh -n \2#" ${RAMDISK_PATH}/etc/inittab
     sed -i -e s/root:NP:/root::/ ${RAMDISK_PATH}/etc/shadow
