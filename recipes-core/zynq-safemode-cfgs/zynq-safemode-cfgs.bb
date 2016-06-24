@@ -23,6 +23,7 @@ python () {
 }
 
 do_install() {
+    exitCode=0
     for devid in ${NILRT_ARM_MIGRATION_SUPPORTED_DEVICES}
     do
 	fpath=$(ls ${S}/Firmware/*/$devid/*.cfg || true)
@@ -31,7 +32,9 @@ do_install() {
 	    install -m 0644 "$fpath"				${D}/$devid
 	    install -m 0755 ${WORKDIR}/niinstallsafemode	${D}/$devid
 	else
-	    echo "WARNING: No firmware file found for device $devid"
+	    bberror "${PN}: No firmware file found for device $devid"
+	    exitCode=1
 	fi
     done
+    return "$exitCode"
 }
