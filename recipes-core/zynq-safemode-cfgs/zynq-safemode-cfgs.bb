@@ -26,8 +26,8 @@ do_install() {
     exitCode=0
     for devid in ${NILRT_ARM_MIGRATION_SUPPORTED_DEVICES}
     do
-	fpath=$(ls ${S}/Firmware/*/$devid/*.cfg || true)
-	if [[ ! -z $fpath ]]; then
+	fpath="$(ls ${S}/Firmware/*/$devid/*.cfg || true)"
+	if [ -n "$fpath" ]; then
 	    mkdir ${D}/$devid
 	    install -m 0644 "$fpath"				${D}/$devid
 	    install -m 0755 ${WORKDIR}/niinstallsafemode	${D}/$devid
