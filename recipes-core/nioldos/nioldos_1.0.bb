@@ -108,6 +108,9 @@ do_install_xilinx-zynqhf() {
 
 FILES_${PN} = "/boot/.oldNILinuxRT"
 
+# BS bins are not stripped, OE strips them causing runtime errors for grub-legacy
+INHIBIT_PACKAGE_STRIP = "1"
+
 # the binaries triggering these QA checks are compiled from BS
-INSANE_SKIP_${PN} += "already-stripped split-strip ldflags arch debug-files host-user-contaminated"
+INSANE_SKIP_${PN} += "ldflags arch debug-files host-user-contaminated"
 INSANE_SKIP_${PN}-dbg += "arch"
