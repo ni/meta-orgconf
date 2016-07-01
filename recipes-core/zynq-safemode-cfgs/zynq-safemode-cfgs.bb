@@ -8,6 +8,7 @@ inherit build-services
 
 EXPORTS_TO_FETCH = "\
 	NI-RIO/controller/bsp/zynq/boot_image/export/4.0/.../safemode/release/Firmware \
+	Measurements/FlexRIO/SWCode/bsp/zynq/boot_image/export/4.0/.../safemode/release/Firmware \
 "
 
 python () {
