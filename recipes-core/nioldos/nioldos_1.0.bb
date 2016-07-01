@@ -12,8 +12,6 @@ SRC_URI_x64 = "file://autologin.sh \
                file://xserver-xfce.default \
 "
 
-SRC_URI += " file://safemode_default_config.tar.gz;unpack=false "
-
 inherit build-services
 
 DEPENDS = "bash linux-nilrt gzip-native"
@@ -106,7 +104,6 @@ do_install_xilinx-zynqhf() {
     install -m 0644 ${DEPLOY_DIR_IMAGE}/restore-mode-image-xilinx-zynqhf.cpio.gz.u-boot ${D}/boot/.oldNILinuxRT/ramdisk
     install -m 0644 ${DEPLOY_DIR_IMAGE}/uImage ${D}/boot/.oldNILinuxRT/
     install -m 0644 ${STAGING_DIR_TARGET}/boot/bw-migrate.scr ${D}/boot/.oldNILinuxRT/
-    install -m 0644 ${WORKDIR}/safemode_default_config.tar.gz ${D}/boot/.oldNILinuxRT/
 }
 
 FILES_${PN} = "/boot/.oldNILinuxRT"
