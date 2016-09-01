@@ -12,7 +12,7 @@ EXPORTS_TO_FETCH = "\
 "
 
 python () {
-    dev_codes = d.getVar('NILRT_ARM_MIGRATION_SUPPORTED_DEVICES', True)
+    dev_codes = d.getVar('NILRT_ARM_MIGRATION_SUPPORTED_DEVICES', True) or ""
     pn = d.getVar("PN", True)
 
     for devc in dev_codes.split(" "):
