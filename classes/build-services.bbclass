@@ -62,7 +62,6 @@ detect_export_path() {
 do_fetch() {
     BALTIC_MOUNT=$(mount | grep '^//baltic\.natinst\.com/penguinExports' | cut -d' ' -f3)
     NIRVANA_MOUNT=$(mount | grep '^//nirvana\.natinst\.com/perforceExports' | cut -d' ' -f3)
-
     if [ -z "$BALTIC_MOUNT" ]; then
         echo "ERROR: Baltic exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
         exit 1
@@ -80,7 +79,8 @@ do_fetch() {
     done
 
     if [ ! -z "$PATHS_TO_SYNC" ]; then
-        rsync -a ${PATHS_TO_SYNC} "${S}"
+        mkdir -p "${BS_EXPORT_DATA}"
+        rsync -a ${PATHS_TO_SYNC} "${BS_EXPORT_DATA}"
 
         if [ $? -ne 0 ]; then
             echo "ERROR: Could not copy files from remote export ${PATH_TO_SYNC}"
@@ -98,3 +98,5 @@ NILRT_NIRVANA_CMD="mount //nirvana.natinst.com/perforceExports <filesystem-path>
 
 # stores all exports to fetch to "$S"
 EXPORTS_TO_FETCH=""
+
+BS_EXPORT_DATA = "${WORKDIR}/build-services-export-data"

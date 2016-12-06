@@ -27,7 +27,7 @@ do_install() {
     exitCode=0
     for devid in ${NILRT_ARM_MIGRATION_SUPPORTED_DEVICES}
     do
-        fpath="$(ls ${S}/Firmware/*/$devid/*.cfg || true)"
+        fpath="$(ls ${BS_EXPORT_DATA}/Firmware/*/$devid/*.cfg || true)"
         if [ -n "$fpath" ]; then
             mkdir ${D}/$devid
             install -m 0644 "$fpath"                        ${D}/$devid
