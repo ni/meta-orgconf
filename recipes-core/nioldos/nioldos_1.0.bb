@@ -40,7 +40,7 @@ do_compile_x64() {
     RAMDISK_PATH=${WORKDIR}/ramdisk-image
     mkdir -p ${RAMDISK_PATH}
 
-    tar -xf ${S}/x64.tar.bz2 -C ${RAMDISK_PATH}
+    tar -xf ${BS_EXPORT_DATA}/x64.tar.bz2 -C ${RAMDISK_PATH}
 
     sed -i "s#\([0-6]\+:[0-6]\+:respawn:/s\?bin/getty\)[ \t]\+\([0-9]\+[ \t]\+tty[A-Za-z0-9]\+\)#\1 -l /etc/init.d/autologin\.sh -n \2#" ${RAMDISK_PATH}/etc/inittab
     sed -i -e s/root:NP:/root::/ ${RAMDISK_PATH}/etc/shadow
@@ -49,7 +49,7 @@ do_compile_x64() {
     cp -f ${WORKDIR}/autologin.sh		${RAMDISK_PATH}/etc/init.d
     cp -f ${WORKDIR}/xserver-xfce.default	${RAMDISK_PATH}/etc/default/xserver-xfce
 
-    find ${S}/smasher_grub/grub-* -maxdepth 0 -type f -exec cp  -f '{}' ${RAMDISK_PATH}/usr/sbin/ \;
+    find ${BS_EXPORT_DATA}/smasher_grub/grub-* -maxdepth 0 -type f -exec cp  -f '{}' ${RAMDISK_PATH}/usr/sbin/ \;
 
     # do not enable network devices by default
     rm -f ${WORKDIR}/etc/rc?.d/*networking
@@ -70,7 +70,7 @@ do_install_x64() {
     mkdir -p ${D}/boot/.oldNILinuxRT/grub2
     mkdir -p ${D}/boot/.oldNILinuxRT/grub2-legacy
 
-    tar -xf ${S}/standard_x64_safemode.tar.gz \
+    tar -xf ${BS_EXPORT_DATA}/standard_x64_safemode.tar.gz \
         -C ${D}/boot/.oldNILinuxRT/safemode_files
 
     cp ${D}/boot/.oldNILinuxRT/safemode_files/bootimage.ini \
@@ -84,11 +84,11 @@ do_install_x64() {
     cp ${WORKDIR}/installation_files_list.ini	${D}/boot/.oldNILinuxRT/provision
 
     cp ${WORKDIR}/ramdisk.gz		${D}/boot/.oldNILinuxRT/.provision
-    cp ${S}/efimgr			${D}/boot/.oldNILinuxRT/provision
+    cp ${BS_EXPORT_DATA}/efimgr		${D}/boot/.oldNILinuxRT/provision
 
-    cp -a ${S}/smasher_grub/*		${D}/boot/.oldNILinuxRT/grub2
-    cp -a ${S}/smasher_grub_legacy/*	${D}/boot/.oldNILinuxRT/grub2-legacy
-    cp ${S}/smasher_grub/unicode.pf2	${D}/boot/.oldNILinuxRT/safemode_files/fonts
+    cp -a ${BS_EXPORT_DATA}/smasher_grub/*		${D}/boot/.oldNILinuxRT/grub2
+    cp -a ${BS_EXPORT_DATA}/smasher_grub_legacy/*	${D}/boot/.oldNILinuxRT/grub2-legacy
+    cp ${BS_EXPORT_DATA}/smasher_grub/unicode.pf2	${D}/boot/.oldNILinuxRT/safemode_files/fonts
 
     install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage		${D}/boot/.oldNILinuxRT/.provision
     install -m 0755 ${DEPLOY_DIR_IMAGE}/bootx64.efi	${D}/boot/.oldNILinuxRT/provision
