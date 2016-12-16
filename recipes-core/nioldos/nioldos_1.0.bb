@@ -15,7 +15,7 @@ SRC_URI_x64 = "file://autologin.sh \
 inherit build-services
 
 DEPENDS = "bash linux-nilrt gzip-native"
-DEPENDS_append_x64 = " grub-efi genext2fs-native "
+DEPENDS_append_x64 = " grub genext2fs-native "
 DEPENDS_append_xilinx-zynqhf = " zynq-bootscripts zynq-itb "
 DEPENDS_append_xilinx-zynq   = " zynq-bootscripts zynq-itb "
 
@@ -25,8 +25,8 @@ do_install[depends] = " linux-nilrt:do_deploy "
 
 # the export version (for ex. 4.0.0d4) is automatically detected, use ... instead of it
 EXPORTS_TO_FETCH_x64 = "\
-    nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub \
-    nilinux/bootloader/grub2/export/1.1/.../targets/linuxU/x64/gcc-4.3/release/smasher_grub_legacy \
+    nilinux/bootloader/grub2/export/2.0/.../targets/linuxU/x64/gcc-4.7-oe/release/smasher_grub \
+    nilinux/bootloader/grub2/export/2.0/.../targets/linuxU/x64/gcc-4.7-oe/release/smasher_grub_legacy \
     nilinux/bootloader/niefimgr/export/1.0/.../targets/linuxU/x64/gcc-4.3/release/efimgr \
     nilinux/os-common/export/5.0/.../standard_x64_safemode.tar.gz \
     ThirdPartyExports/NIOpenEmbedded/export/5.0/.../targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 \
