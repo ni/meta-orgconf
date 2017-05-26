@@ -21,7 +21,7 @@ DEPENDS_append_xilinx-zynq   = " zynq-bootscripts zynq-itb "
 
 RDEPENDS_${PN} = "bash"
 
-do_install[depends] = " linux-nilrt:do_deploy "
+do_install[depends] = " linux-nilrt:do_deploy restore-mode-image:do_image_complete "
 
 # the export version (for ex. 4.0.0d4) is automatically detected, use ... instead of it
 EXPORTS_TO_FETCH_x64 = "\
