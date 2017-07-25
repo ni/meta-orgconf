@@ -90,7 +90,7 @@ do_install_x64() {
     cp ${BS_EXPORT_DATA}/smasher_grub/unicode.pf2	${D}/boot/.oldNILinuxRT/safemode_files/fonts
 
     install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage		${D}/boot/.oldNILinuxRT/.provision
-    install -m 0755 ${DEPLOY_DIR_IMAGE}/bootx64.efi	${D}/boot/.oldNILinuxRT/provision
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/grub-efi-bootx64.efi	${D}/boot/.oldNILinuxRT/provision/bootx64.efi
 }
 
 do_install_xilinx-zynqhf() {
