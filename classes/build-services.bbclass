@@ -80,3 +80,5 @@ NILRT_NIRVANA_CMD="mount //nirvana.natinst.com/perforceExports <filesystem-path>
 EXPORTS_TO_FETCH=""
 
 BS_EXPORT_DATA = "${WORKDIR}/build-services-export-data/${PN}_${PV}"
+
+do_fetch[depends] += "util-linux-native:do_populate_sysroot rsync-native:do_populate_sysroot"
