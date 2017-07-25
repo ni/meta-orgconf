@@ -111,5 +111,5 @@ FILES_${PN} = "/boot/.oldNILinuxRT"
 INHIBIT_PACKAGE_STRIP = "1"
 
 # the binaries triggering these QA checks are compiled from BS
-INSANE_SKIP_${PN} += "ldflags arch debug-files host-user-contaminated"
+INSANE_SKIP_${PN} += "ldflags arch debug-files host-user-contaminated already-stripped"
 INSANE_SKIP_${PN}-dbg += "arch"
