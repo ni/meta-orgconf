@@ -7,8 +7,8 @@ SRC_URI = "file://niinstallsafemode"
 inherit build-services
 
 EXPORTS_TO_FETCH = "\
-    NI-RIO/controller/bsp/zynq/boot_image/export/5.0/.../safemode/release/Firmware \
-    Measurements/FlexRIO/SWCode/bsp/zynq/boot_image/export/5.0/.../safemode/release/Firmware \
+    NI-RIO/controller/bsp/zynq/boot_image/export/5.0/5.0.0f0/safemode/release/Firmware \
+    Measurements/FlexRIO/SWCode/bsp/zynq/boot_image/export/5.0/5.0.0f0/safemode/release/Firmware \
 "
 
 python () {
