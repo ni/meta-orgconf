@@ -28,7 +28,7 @@ EXPORTS_TO_FETCH_x64 = "\
     nilinux/bootloader/grub2/export/2.0/2.0.0f0/targets/linuxU/x64/gcc-4.7-oe/release/smasher_grub_legacy \
     nilinux/bootloader/niefimgr/export/1.0/1.0.0f0/targets/linuxU/x64/gcc-4.3/release/efimgr \
     nilinux/os-common/export/5.0/5.0.0f1/standard_x64_safemode.tar.gz \
-    ThirdPartyExports/NIOpenEmbedded/export/5.0/5.0.0f1/targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 \
+    ThirdPartyExports/NIOpenEmbedded/export/5.0/5.0.0f0/targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 \
 "
 
 RAMDISK_SIZE_KB="524288K"
