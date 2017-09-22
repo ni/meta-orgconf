@@ -31,8 +31,8 @@ detect_export_path() {
 #    nilinux/bootloader/grub2/export/2.0/2.0.0f0/targets/linuxU/x64/gcc-4.3/release/smasher_grub \
 #"
 do_fetch() {
-    BALTIC_MOUNT=$(mount | grep '^//baltic\.natinst\.com/penguinExports' | cut -d' ' -f3)
-    NIRVANA_MOUNT=$(mount | grep '^//nirvana\.natinst\.com/perforceExports' | cut -d' ' -f3)
+    BALTIC_MOUNT=$(mount | grep '^//baltic*/penguinExports' | cut -d' ' -f3)
+    NIRVANA_MOUNT=$(mount | grep '^//nirvana*/perforceExports' | cut -d' ' -f3)
     if [ -z "$BALTIC_MOUNT" ]; then
         echo "ERROR: Baltic exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
         exit 1
