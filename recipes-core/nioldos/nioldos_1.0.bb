@@ -15,13 +15,17 @@ SRC_URI_x64 = "file://autologin.sh \
 inherit build-services
 
 DEPENDS = "bash linux-nilrt gzip-native"
-DEPENDS_append_x64 = " grub genext2fs-native "
+DEPENDS_append_x64 = " grub e2fsprogs-native "
 DEPENDS_append_xilinx-zynqhf = " zynq-bootscripts zynq-itb "
 DEPENDS_append_xilinx-zynq   = " zynq-bootscripts zynq-itb "
 
 RDEPENDS_${PN} = "bash"
 
-do_install[depends] = " linux-nilrt:do_deploy restore-mode-image:do_image_complete "
+do_install[depends] = "\
+	linux-nilrt:do_deploy \
+	restore-mode-image:do_image_complete \
+	${@bb.utils.contains('TARGET_ARCH', 'arm', '', 'grub-efi:do_deploy', d)} \
+"
 
 EXPORTS_TO_FETCH_x64 = "\
     nilinux/bootloader/grub2/export/2.0/2.0.0f0/targets/linuxU/x64/gcc-4.7-oe/release/smasher_grub \
@@ -31,8 +35,7 @@ EXPORTS_TO_FETCH_x64 = "\
     ThirdPartyExports/NIOpenEmbedded/export/5.0/5.0.0f0/targets/linuxU/x64/gcc-4.7-oe/release/x64.tar.bz2 \
 "
 
-RAMDISK_SIZE_KB="524288K"
-RAMDISK_NUM_INODES="32768"
+RAMDISK_SIZE_KB="262144"
 
 do_compile_x64() {
     # here create the ramdisk image needed for migration
@@ -53,7 +56,9 @@ do_compile_x64() {
     # do not enable network devices by default
     rm -f ${WORKDIR}/etc/rc?.d/*networking
 
-    genext2fs -b ${RAMDISK_SIZE_KB} -N ${RAMDISK_NUM_INODES} -d ${RAMDISK_PATH} ${WORKDIR}/ramdisk
+    dd if=/dev/zero of=${WORKDIR}/ramdisk count=${RAMDISK_SIZE_KB} bs=1024
+    mke2fs -F -i 4096 ${WORKDIR}/ramdisk -d ${RAMDISK_PATH}
+
     gzip -f9 ${WORKDIR}/ramdisk
 
     # cleanup ramdisk creation generated files
