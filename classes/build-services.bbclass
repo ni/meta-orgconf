@@ -62,11 +62,6 @@ do_fetch() {
     fi
 }
 
-# At every build we want to automatically fetch the latest export: add nostamp
-# to prevent stale exports because the fetch task metadata might not be modified
-# (don't cache do_fetch, always run it and rely on rsync to minimize traffic)
-do_fetch[nostamp] = "1"
-
 do_clean() {
     rm -rf "${BS_EXPORT_DATA}"
 }
