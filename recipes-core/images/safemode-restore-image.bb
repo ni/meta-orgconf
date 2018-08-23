@@ -1,8 +1,14 @@
-require recipes-core/images/restore-mode-image.inc
+DESCRIPTION = "Tiny initramfs image intended to run restore mode operations for old NILinux RT, uses safemode-image"
 
-# don't have a FACTORY_IMAGE (yet) so don't do FACTORY_IMAGE = "safemode-image" here;
-# maybe in the future we'll find time to refactor the safemode-image.bb to behave like
-# a normal restore-mode payload and just do FACTORY_IMAGE = "safemode-image" instead
-ROOTFS_POSTPROCESS_COMMAND_remove = "install_payload;"
+IMAGE_FSTYPES = "${INITRAMFS_FSTYPES} tar.bz2"
 
-PACKAGE_INSTALL += "safemode-image"
+PACKAGE_INSTALL = "${ROOTFS_BOOTSTRAP_INSTALL} \
+                   packagegroup-ni-restoremode \
+                   safemode-image \
+"
+
+DEPENDS += "init-restore-mode wic-tools"
+
+INITRAMFS_MAXSIZE = "524288"
+
+inherit core-image

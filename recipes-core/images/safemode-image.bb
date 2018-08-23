@@ -1,12 +1,6 @@
-UMMARY = "Safemode image for older nilrt"
+SUMMARY = "Safemode image for older nilrt"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
-
-inherit build-services
-
-EXPORTS_TO_FETCH = "\
-	 nilinux/os-common/export/6.1/6.1.0f1/standard_x64_safemode.tar.gz \
-"
 
 SRC_URI = "\
 	file://grubenv_non_ni_target \
@@ -14,6 +8,12 @@ SRC_URI = "\
 "
 
 RDEPENDS_${PN} += "grub-efi grub"
+COMPATIBLE_MACHINE = "x64"
+
+inherit build-services
+EXPORTS_TO_FETCH = "\
+	 nilinux/os-common/export/6.1/6.1.0f1/standard_x64_safemode.tar.gz \
+"
 
 do_install() {
 	mkdir -p ${D}/boot/.oldNILinuxRT/safemode_files/fonts
@@ -26,5 +26,3 @@ do_install() {
 }
 
 FILES_${PN} = "/boot/.oldNILinuxRT"
-
-COMPATIBLE_MACHINE = "x64"
