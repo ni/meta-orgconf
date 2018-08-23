@@ -15,12 +15,14 @@ EXPORTS_TO_FETCH = "\
 	 nilinux/os-common/export/7.0/7.0.0d29/standard_x64_safemode.tar.gz \
 "
 
+export SAFEMODE_PAYLOAD_PATH
+
 do_install() {
 	mkdir -p ${D}/boot/.oldNILinuxRT/safemode_files/fonts
 
-	tar -xf ${BS_EXPORT_DATA}/standard_x64_safemode.tar.gz \
-	    -C ${D}/boot/.oldNILinuxRT/safemode_files
+	SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH:-${BS_EXPORT_DATA}}/standard_x64_safemode.tar.gz"
 
+	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/boot/.oldNILinuxRT/safemode_files
 	cp ${WORKDIR}/grubenv_non_ni_target	${D}/boot/.oldNILinuxRT/safemode_files/
 	cp ${WORKDIR}/unicode.pf2		${D}/boot/.oldNILinuxRT/safemode_files/fonts
 }
