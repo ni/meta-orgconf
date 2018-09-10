@@ -12,7 +12,7 @@ COMPATIBLE_MACHINE = "x64"
 
 inherit build-services
 EXPORTS_TO_FETCH = "\
-	 nilinux/os-common/export/7.0/7.0.0d34/standard_x64_safemode.tar.gz \
+	 nilinux/os-common/export/7.0/7.0.0d46/standard_x64_safemode.tar.gz \
 "
 
 export SAFEMODE_PAYLOAD_PATH
