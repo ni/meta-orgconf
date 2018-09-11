@@ -22,6 +22,9 @@ do_install() {
 
 	SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH:-${BS_EXPORT_DATA}}/standard_x64_safemode.tar.gz"
 
+	echo SAFEMODE_PAYLOAD_PATH = ${SAFEMODE_PAYLOAD_PATH}
+	echo SAFEMODE_PAYLOAD = ${SAFEMODE_PAYLOAD}
+
 	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/boot/.oldNILinuxRT/safemode_files
 	cp ${WORKDIR}/grubenv_non_ni_target	${D}/boot/.oldNILinuxRT/safemode_files/
 	cp ${WORKDIR}/unicode.pf2		${D}/boot/.oldNILinuxRT/safemode_files/fonts
