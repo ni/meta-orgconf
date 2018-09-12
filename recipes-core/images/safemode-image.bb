@@ -30,4 +30,8 @@ do_install() {
 	cp ${WORKDIR}/unicode.pf2		${D}/boot/.oldNILinuxRT/safemode_files/fonts
 }
 
+# always invalidate the sstate-cache for do_install as we have the SAFEMODE_PAYLOAD_PATH
+# var which is identical across builds
+do_install[nostamp] = "1"
+
 FILES_${PN} = "/boot/.oldNILinuxRT"
