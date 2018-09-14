@@ -18,20 +18,21 @@ EXPORTS_TO_FETCH = "\
 export SAFEMODE_PAYLOAD_PATH
 
 do_install() {
-	mkdir -p ${D}/boot/.oldNILinuxRT/safemode_files/fonts
+	mkdir -p ${D}/payload/fonts
 
 	SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH:-${BS_EXPORT_DATA}}/standard_x64_safemode.tar.gz"
 
 	echo SAFEMODE_PAYLOAD_PATH = ${SAFEMODE_PAYLOAD_PATH}
 	echo SAFEMODE_PAYLOAD = ${SAFEMODE_PAYLOAD}
 
-	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/boot/.oldNILinuxRT/safemode_files
-	cp ${WORKDIR}/grubenv_non_ni_target	${D}/boot/.oldNILinuxRT/safemode_files/
-	cp ${WORKDIR}/unicode.pf2		${D}/boot/.oldNILinuxRT/safemode_files/fonts
+	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/payload
+
+	cp ${WORKDIR}/grubenv_non_ni_target	${D}/payload
+	cp ${WORKDIR}/unicode.pf2		${D}/payload/fonts
 }
 
 # always invalidate the sstate-cache for do_install as we have the SAFEMODE_PAYLOAD_PATH
 # var which is identical across builds
 do_install[nostamp] = "1"
 
-FILES_${PN} = "/boot/.oldNILinuxRT"
+FILES_${PN} = "/payload"
