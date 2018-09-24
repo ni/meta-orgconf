@@ -7,8 +7,10 @@ PACKAGE_INSTALL = "${ROOTFS_BOOTSTRAP_INSTALL} \
                    safemode-image \
 "
 
-DEPENDS += "init-restore-mode safemode-image"
+DEPENDS += "init-restore-mode"
 
 INITRAMFS_MAXSIZE = "524288"
+
+do_rootfs[depends] += "safemode-image:do_package_write_ipk"
 
 inherit core-image
