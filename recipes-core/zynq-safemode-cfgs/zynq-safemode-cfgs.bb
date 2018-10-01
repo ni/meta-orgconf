@@ -12,7 +12,7 @@ EXPORTS_TO_FETCH = "\
 "
 
 python () {
-    dev_codes = d.getVar('NILRT_ARM_MIGRATION_SUPPORTED_DEVICES', True) or ""
+    dev_codes = d.getVar('NILRT_ARM_DEVICE_CODES', True) or ""
     pn = d.getVar("PN", True)
 
     for devc in dev_codes.split(" "):
@@ -25,7 +25,7 @@ python () {
 
 do_install() {
     exitCode=0
-    for devid in ${NILRT_ARM_MIGRATION_SUPPORTED_DEVICES}
+    for devid in ${NILRT_ARM_DEVICE_CODES}
     do
         fpath="$(ls ${BS_EXPORT_DATA}/Firmware/*/$devid/*.cfg || true)"
         if [ -n "$fpath" ]; then
