@@ -19,7 +19,7 @@ do_install_x64() {
     install -m 0644 ${WORKDIR}/grub_migrate.cfg ${D}/boot/.oldNILinuxRT/
 }
 
-do_install_xilinx-zynqhf() {
+do_install_arm() {
     install -d ${D}/boot
     install -d ${D}/boot/.oldNILinuxRT/dtbs
     for f in ${DEPLOY_DIR_IMAGE}/uImage-ni-*.dtb; do
