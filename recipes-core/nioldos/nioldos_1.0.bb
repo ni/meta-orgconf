@@ -28,7 +28,7 @@ do_install_xilinx-zynqhf() {
     done
     install -m 0644 ${DEPLOY_DIR_IMAGE}/restore-mode-image-xilinx-zynqhf.cpio.gz.u-boot ${D}/boot/.oldNILinuxRT/ramdisk
     install -m 0644 ${DEPLOY_DIR_IMAGE}/uImage ${D}/boot/.oldNILinuxRT/
-    install -m 0644 ${STAGING_DIR_TARGET}/boot/bw-migrate.scr ${D}/boot/.oldNILinuxRT/
+    install -m 0644 ${STAGING_DIR_TARGET}/boot/backwards_migrate.scr ${D}/boot/.oldNILinuxRT/
 }
 
 FILES_${PN} = "/boot/.oldNILinuxRT"
