@@ -7,15 +7,17 @@ SRC_URI_x64 = "file://grub_migrate.cfg"
 DEPENDS = "gzip-native e2fsprogs-native"
 DEPENDS_arm += "zynq-bootscripts zynq-itb"
 
+RESTORE_IMAGE = "${@bb.utils.contains('TARGET_ARCH', 'arm', 'restore-mode-image', 'safemode-restore-image', d)}"
+
 do_install[depends] = " \
-    ${@bb.utils.contains('TARGET_ARCH', 'arm', '', 'safemode-restore-image:do_image_complete', d)} \
+    ${RESTORE_IMAGE}:do_image_complete \
     linux-nilrt:do_deploy \
 "
 
 do_install_x64() {
     mkdir -p ${D}/boot/.oldNILinuxRT
     install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage ${D}/boot/.oldNILinuxRT/
-    install -m 0755 ${DEPLOY_DIR_IMAGE}/safemode-restore-image-x64.cpio.gz ${D}/boot/.oldNILinuxRT/initrd
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/safemode-restore-image-${MACHINE}.cpio.gz ${D}/boot/.oldNILinuxRT/initrd
     install -m 0644 ${WORKDIR}/grub_migrate.cfg ${D}/boot/.oldNILinuxRT/
 }
 
@@ -26,7 +28,7 @@ do_install_arm() {
         dtb_name=`echo $f | awk -F"[-.]" '{print $(NF-1)}'`
         install -m 0644 $f ${D}/boot/.oldNILinuxRT/dtbs/ni-0x$dtb_name.dtb
     done
-    install -m 0644 ${DEPLOY_DIR_IMAGE}/restore-mode-image-xilinx-zynqhf.cpio.gz.u-boot ${D}/boot/.oldNILinuxRT/ramdisk
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/restore-mode-image-${MACHINE}.cpio.gz.u-boot ${D}/boot/.oldNILinuxRT/ramdisk
     install -m 0644 ${DEPLOY_DIR_IMAGE}/uImage ${D}/boot/.oldNILinuxRT/
     install -m 0644 ${STAGING_DIR_TARGET}/boot/backwards_migrate.scr ${D}/boot/.oldNILinuxRT/
 }
