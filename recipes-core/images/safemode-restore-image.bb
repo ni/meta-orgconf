@@ -7,6 +7,8 @@ PACKAGE_INSTALL = "${ROOTFS_BOOTSTRAP_INSTALL} \
                    safemode-image \
 "
 
+IMAGE_FEATURES += "empty-root-password"
+
 DEPENDS += "init-restore-mode"
 
 INITRAMFS_MAXSIZE = "524288"
