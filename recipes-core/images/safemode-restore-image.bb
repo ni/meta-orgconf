@@ -13,6 +13,12 @@ DEPENDS += "init-restore-mode"
 
 INITRAMFS_MAXSIZE = "524288"
 
+VIRTUAL-RUNTIME_mountpoint = "util-linux-mountpoint"
+PREFERRED_PROVIDER_getopt = "util-linux-getopt"
+VIRTUAL-RUNTIME_getopt = "util-linux-getopt"
+VIRTUAL-RUNTIME_base-utils = "util-linux"
+PREFERRED_PROVIDER_virtual/base-utils="util-linux"
+
 do_rootfs[depends] += "safemode-image:do_package_write_ipk"
 
 inherit core-image
