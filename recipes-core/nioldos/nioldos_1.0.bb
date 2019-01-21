@@ -16,7 +16,7 @@ do_install[depends] = " \
 
 do_install_x64() {
     mkdir -p ${D}/boot/.oldNILinuxRT
-    install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage ${D}/boot/.oldNILinuxRT/
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/bzImage_safemode ${D}/boot/.oldNILinuxRT/bzImage
     install -m 0755 ${DEPLOY_DIR_IMAGE}/safemode-restore-image-${MACHINE}.cpio.gz ${D}/boot/.oldNILinuxRT/initrd
     install -m 0644 ${WORKDIR}/grub_migrate.cfg ${D}/boot/.oldNILinuxRT/
 }

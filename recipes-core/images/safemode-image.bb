@@ -27,6 +27,9 @@ do_install() {
 
 	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/payload
 
+	# needed by nioldos to boot a matching kernel version with the modules inside this image
+	cp ${D}/payload/bzImage ${DEPLOY_DIR_IMAGE}/bzImage_safemode
+
 	cp ${WORKDIR}/grubenv_non_ni_target	${D}/payload
 	cp ${WORKDIR}/unicode.pf2		${D}/payload/fonts
 
