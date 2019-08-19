@@ -11,11 +11,14 @@ RDEPENDS_${PN} += "grub-efi grub"
 COMPATIBLE_MACHINE = "x64"
 
 inherit build-services
-EXPORTS_TO_FETCH = "\
-	 nilinux/os-common/export/7.0/7.0.0b41/standard_x64_safemode.tar.gz \
-"
-
+# optional env var with path to local safemode tar.gz
 export SAFEMODE_PAYLOAD_PATH
+
+SAFEMODE_DEFAULT_EXPORT = "nilinux/os-common/export/7.1/7.1.0f0/standard_x64_safemode.tar.gz"
+
+# set EXPORTS_TO_FETCH iff SAFEMODE_PAYLOAD_PATH is not set
+EXPORTS_TO_FETCH = "${@ oe.utils.ifelse(d.getVar('SAFEMODE_PAYLOAD_PATH') not in (None, ''), \
+                                        '', SAFEMODE_DEFAULT_EXPORT)}"
 
 do_install() {
 	mkdir -p ${D}/payload/fonts
