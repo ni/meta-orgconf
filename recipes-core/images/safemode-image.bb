@@ -13,25 +13,28 @@ COMPATIBLE_MACHINE = "x64"
 inherit build-services
 # optional env var with path to local safemode tar.gz
 export SAFEMODE_PAYLOAD_PATH
+EXPORTS_TO_FETCH = "$EXPORTS_TO_FETCH"
 
-SAFEMODE_DEFAULT_EXPORT = "nilinux/os-common/export/7.1/7.1.0f0/standard_x64_safemode.tar.gz"
+do_fetch_prepend() {
+        mkdir -p ${BS_EXPORT_DATA}
 
-# set EXPORTS_TO_FETCH iff SAFEMODE_PAYLOAD_PATH is not set
-EXPORTS_TO_FETCH = "${@ oe.utils.ifelse(d.getVar('SAFEMODE_PAYLOAD_PATH') not in (None, ''), \
-                                        '', SAFEMODE_DEFAULT_EXPORT)}"
+        if [ -z "$SAFEMODE_PAYLOAD_PATH" ]; then
+                EXPORTS_TO_FETCH=$(bs_get_latest_final "nilinux/os-common/export")"/standard_x64_safemode.tar.gz"
+                SAFEMODE_PAYLOAD=$EXPORTS_TO_FETCH
+        else
+                SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH}/standard_x64_safemode.tar.gz"
+                cp -f "$SAFEMODE_PAYLOAD" ${BS_EXPORT_DATA}
+        fi
+
+        echo SAFEMODE_PAYLOAD=$SAFEMODE_PAYLOAD >${BS_EXPORT_DATA}/safemode_version_info
+        echo SAFEMODE_MAJOR_VERSION=`echo $SAFEMODE_PAYLOAD |egrep -o "\/[0-9]+\.[0-9]+\/" |tr -d "/"` >>${BS_EXPORT_DATA}/safemode_version_info
+        echo SAFEMODE_MINOR_VERSION=`echo $SAFEMODE_PAYLOAD |egrep -o "\/[0-9]+\.[0-9]+.[0-9]+[abdf][0-9]+\/" |tr -d "/"` >>${BS_EXPORT_DATA}/safemode_version_info
+}
 
 do_install() {
 	mkdir -p ${D}/payload/fonts
 
-	SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH:-${BS_EXPORT_DATA}}/standard_x64_safemode.tar.gz"
-
-	echo SAFEMODE_PAYLOAD_PATH = ${SAFEMODE_PAYLOAD_PATH}
-	echo SAFEMODE_PAYLOAD = ${SAFEMODE_PAYLOAD}
-
-	tar -xf ${SAFEMODE_PAYLOAD} -C ${D}/payload
-
-	# needed by nioldos to boot a matching kernel version with the modules inside this image
-	cp ${D}/payload/bzImage ${DEPLOY_DIR_IMAGE}/bzImage_safemode
+	tar -xf "${BS_EXPORT_DATA}/standard_x64_safemode.tar.gz" -C ${D}/payload
 
 	cp ${WORKDIR}/grubenv_non_ni_target	${D}/payload
 	cp ${WORKDIR}/unicode.pf2		${D}/payload/fonts
@@ -42,8 +45,13 @@ do_install() {
 	echo "GRUB_VERSION=${GRUB_VERSION}.0" >> ${D}/payload/imageinfo
 }
 
-# always invalidate the sstate-cache for do_install as we have the SAFEMODE_PAYLOAD_PATH
-# var which is identical across builds
+sysroot_stage_all_append() {
+        install -m 0755 ${BS_EXPORT_DATA}/safemode_version_info ${SYSROOT_DESTDIR}
+}
+
+# always invalidate the sstate-cache for do_install and do_fetch as we depend on an external
+# file (standard_x64_safemode.tar.gz) which is not cached as part of sstate
+do_fetch[nostamp] = "1"
 do_install[nostamp] = "1"
 
 FILES_${PN} = "\
