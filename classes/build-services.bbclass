@@ -1,27 +1,53 @@
 # Helper class for Build Services communication / integration
 #
 
-BALTIC_MOUNT=""
-NIRVANA_MOUNT=""
+MNT_BALTIC_PENGUINEXPORTS=""
+MNT_NIRVANA_PERFORCEEXPORTS=""
 
 detect_export_path() {
     EXPORT_PATH="$1"
 
     EXPORT_PREFIX=$(echo "$EXPORT_PATH" | cut -d'/' -f1)
-    NIRVANA_EXPORT="$NIRVANA_MOUNT/$EXPORT_PREFIX"
-    BALTIC_EXPORT="$BALTIC_MOUNT/$EXPORT_PREFIX"
+    NIRVANA_EXPORT="$MNT_NIRVANA_PERFORCEEXPORTS/$EXPORT_PREFIX"
+    BALTIC_EXPORT="$MNT_BALTIC_PENGUINEXPORTS/$EXPORT_PREFIX"
 
     # exception for ThirdPartyExports bc it is on both nirvana/baltic
-    if [ $EXPORT_PREFIX = "ThirdPartyExports" ]; then
+    if [ "$EXPORT_PREFIX" = "ThirdPartyExports" ]; then
         EXPORT_PREFIX=$(echo "$EXPORT_PATH" | cut -d'/' -f2)
-        NIRVANA_EXPORT="$NIRVANA_MOUNT/ThirdPartyExports/$EXPORT_PREFIX"
-        BALTIC_EXPORT="$BALTIC_MOUNT/ThirdPartyExports/$EXPORT_PREFIX"
+        NIRVANA_EXPORT="$MNT_NIRVANA_PERFORCEEXPORTS/ThirdPartyExports/$EXPORT_PREFIX"
+        BALTIC_EXPORT="$MNT_BALTIC_PENGUINEXPORTS/ThirdPartyExports/$EXPORT_PREFIX"
     fi
 
-    if [ -d "$BALTIC_EXPORT" ]; then
-        echo "$BALTIC_MOUNT/$1"
+    if [ -z "$EXPORT_PREFIX" ]; then
+        echo "$EXPORT_PATH"
+    elif [ -d "$BALTIC_EXPORT" ]; then
+        echo "$MNT_BALTIC_PENGUINEXPORTS/$1"
     elif [ -d "$NIRVANA_EXPORT" ]; then
-        echo "$NIRVANA_MOUNT/$1"
+        echo "$MNT_NIRVANA_PERFORCEEXPORTS/$1"
+    fi
+}
+
+bs_get_latest_final() {
+    get_mount_points
+    EXPORT_PATH="$1"
+    EXPORT_FULL_PATH=$(detect_export_path $EXPORT_PATH)
+    find $EXPORT_FULL_PATH -maxdepth 2 -regex ".*[0-9]+.[0-9]+.[0-9]+f[0-9]+$" -type d|sort -V |tail -n 1
+}
+
+get_mount_points() {
+    if [ -z "$MNT_BALTIC_PENGUINEXPORTS" ]; then
+        MNT_BALTIC_PENGUINEXPORTS=$(mount | grep '^//baltic.*/penguinExports' | cut -d' ' -f3)
+        if [ -z "$MNT_BALTIC_PENGUINEXPORTS" ]; then
+            echo "ERROR: Baltic exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
+            exit 1
+        fi
+    fi
+    if [ -z "$MNT_NIRVANA_PERFORCEEXPORTS" ]; then
+        MNT_NIRVANA_PERFORCEEXPORTS=$(mount | grep '^//nirvana.*/perforceExports' | cut -d' ' -f3)
+        if [ -z "$MNT_NIRVANA_PERFORCEEXPORTS" ]; then
+            echo "ERROR: Nirvana exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
+            exit 1
+        fi
     fi
 }
 
@@ -31,16 +57,7 @@ detect_export_path() {
 #    nilinux/bootloader/grub2/export/2.0/2.0.0f0/targets/linuxU/x64/gcc-4.3/release/smasher_grub \
 #"
 do_fetch() {
-    BALTIC_MOUNT=$(mount | grep '^//baltic.*/penguinExports' | cut -d' ' -f3)
-    NIRVANA_MOUNT=$(mount | grep '^//nirvana.*/perforceExports' | cut -d' ' -f3)
-    if [ -z "$BALTIC_MOUNT" ]; then
-        echo "ERROR: Baltic exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
-        exit 1
-    fi
-    if [ -z "$NIRVANA_MOUNT" ]; then
-        echo "ERROR: Nirvana exports are not mounted, please mount using something like: ${NILRT_BALTIC_CMD}"
-        exit 1
-    fi
+    get_mount_points
 
     PATHS_TO_SYNC=""
     for exp in ${EXPORTS_TO_FETCH}
