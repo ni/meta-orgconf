@@ -22,7 +22,7 @@ PREFERRED_PROVIDER_virtual/base-utils="util-linux"
 do_rootfs[depends] += "safemode-image:do_package_write_ipk"
 
 symlink_iso () {
-        ln -sf ${DEPLOY_DIR_IMAGE}/${PN}-${MACHINE}.wic ${DEPLOY_DIR_IMAGE}/${PN}-${MACHINE}.iso
+        ln -sf ${PN}-${MACHINE}.wic ${DEPLOY_DIR_IMAGE}/${PN}-${MACHINE}.iso
 }
 
 ROOTFS_POSTPROCESS_COMMAND += "symlink_iso;"
