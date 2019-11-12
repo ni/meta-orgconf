@@ -19,7 +19,7 @@ do_fetch_prepend() {
         mkdir -p ${BS_EXPORT_DATA}
 
         if [ -z "$SAFEMODE_PAYLOAD_PATH" ]; then
-                EXPORTS_TO_FETCH=$(bs_get_latest_final "nilinux/os-common/export")"/standard_x64_safemode.tar.gz"
+                EXPORTS_TO_FETCH=$(bs_get_latest_export "nilinux/os-common/export/8.0")"/standard_x64_safemode.tar.gz"
                 SAFEMODE_PAYLOAD=$EXPORTS_TO_FETCH
         else
                 SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH}/standard_x64_safemode.tar.gz"

@@ -27,6 +27,17 @@ detect_export_path() {
     fi
 }
 
+bs_get_latest_export() {
+    get_mount_points
+    EXPORT_PATH="$1"
+    EXPORT_FULL_PATH=$(detect_export_path $EXPORT_PATH)
+    for phase in f b a d ; do
+        latest_export=$(find $EXPORT_FULL_PATH -maxdepth 1 -regex ".*[0-9]+.[0-9]+.[0-9]+${phase}[0-9]+$" -type d|sort -V |tail -n 1)
+        [ -n "$latest_export" ] && break
+    done
+    echo "$latest_export"
+}
+
 bs_get_latest_final() {
     get_mount_points
     EXPORT_PATH="$1"
