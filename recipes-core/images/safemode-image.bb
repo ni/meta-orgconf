@@ -22,7 +22,7 @@ do_fetch_prepend() {
                 EXPORTS_TO_FETCH=$(bs_get_latest_export "nilinux/os-common/export/8.0")"/standard_x64_safemode.tar.gz"
                 SAFEMODE_PAYLOAD=$EXPORTS_TO_FETCH
         else
-                SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH}/standard_x64_safemode.tar.gz"
+                SAFEMODE_PAYLOAD="${SAFEMODE_PAYLOAD_PATH}/standard_x64_safemode_dunfell.tar.gz"
                 cp -f "$SAFEMODE_PAYLOAD" ${BS_EXPORT_DATA}
         fi
 
@@ -34,7 +34,7 @@ do_fetch_prepend() {
 do_install() {
 	mkdir -p ${D}/payload/fonts
 
-	tar -xf "${BS_EXPORT_DATA}/standard_x64_safemode.tar.gz" -C ${D}/payload
+	tar -xf "${BS_EXPORT_DATA}/standard_x64_safemode_dunfell.tar.gz" -C ${D}/payload
 
 	cp ${WORKDIR}/grubenv_non_ni_target	${D}/payload
 	cp ${WORKDIR}/unicode.pf2		${D}/payload/fonts
